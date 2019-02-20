@@ -28,9 +28,9 @@ public class AlberoBinario {
     public NodoAlbero getRoot() {
         return this.root;
     }
-
+    
     public void printNodo(NodoAlbero root) {
-
+        
         if(root == null) {
             System.out.println("Nessuno nodo presente!");
             return;
@@ -52,7 +52,7 @@ public class AlberoBinario {
         Scanner reader = new Scanner(System.in);
         NodoAlbero current = node;
         int scelta = 0;
-
+        
         do {
             printNodo(node);
             System.out.println("1 - Se si vuole cambiare il valore del nodo attuale");
@@ -89,15 +89,15 @@ public class AlberoBinario {
                     break;
             }
         } while(scelta != 0);
-
+        
     }
-
+    
     /*
      * metodo che aggiunge una foglia a sinistra della radice
      * con valore root_val
      */
     public void addLeafSx(char root_val, char leaf_val) {
-
+        
         NodoAlbero node = null;
         NodoAlbero current = null;
 
@@ -119,7 +119,7 @@ public class AlberoBinario {
         }
         else
             System.out.println("Nodo "+root_val+" non trovato!");
-
+        
     }
 
     /*
@@ -156,7 +156,7 @@ public class AlberoBinario {
      */
     private NodoAlbero cercaNodo(NodoAlbero root, char val) {
         NodoAlbero node = null;
-
+        
         if(root == null)
             return null;
         //ho trovato il nodo con il valore
@@ -168,7 +168,7 @@ public class AlberoBinario {
         //visito la foglia destra
         if(root.getDx() != null)
             node = cercaNodo(root.getDx(), val);
-
+        
         return node;
     }
 
@@ -176,7 +176,7 @@ public class AlberoBinario {
      * metodo di stampa ricorsiva seguendo la regola del pre-order
      */
     public void visita_PreOrder(NodoAlbero root) {
-
+        
         if(root == null)
             return;
         //stampa radice
@@ -187,14 +187,14 @@ public class AlberoBinario {
         //stampa foglia destra
         if(root.getDx() != null)
             visita_PreOrder(root.getDx());
-
+        
     }
 
     /*
      * metodo di stampa ricorsiva seguendo la regola del in-order
      */
     public void visita_InOrder(NodoAlbero root) {
-
+        
         if(root == null)
             return;
         //stampa foglia sinistra
@@ -205,14 +205,14 @@ public class AlberoBinario {
         //stampa foglia destra
         if(root.getDx() != null)
             visita_InOrder(root.getDx());
-
+        
     }
 
     /*
      * metodo di stampa ricorsiva seguendo la regola del post-order
      */
     public void visita_PostOrder(NodoAlbero root) {
-
+        
         if(root == null)
             return;
         //stampa foglia sinistra
@@ -223,32 +223,32 @@ public class AlberoBinario {
             visita_PostOrder(root.getDx());
         //stampa radice
         System.out.print(root.getValue()+", ");
-
+        
     }
 
-
+    
     /*
      * metodo che ritorna la somma dei valori contenuti in tutti i nodi
      */
     public int sommaNodi(NodoAlbero root) {
         int somma = 0;
-
+        
         if(root == null)
             return somma;
         somma += root.getValue();
         if(root.getSx() != null)
             somma += sommaNodi(root.getSx());
-
+        
         return somma;
     }
-
-    /*
+    
+    /* TODO
      * metodo che ritorna true nel caso trovi il valore richiesto
      */
     public boolean cercaIterativa(char val) {
         NodoAlbero tmp = root;
         NodoAlbero oldRoot = root;
-
+        
         if(tmp == null)
             return false;
         //TODO USARE LO STACK PER RICERCA ITERATIVA
@@ -257,8 +257,8 @@ public class AlberoBinario {
                 return true;
 
         }
-
-
+        
+        
         /*else {
             //salva la radice per entrare nelle foglie
             oldRoot = tmp;
@@ -267,7 +267,39 @@ public class AlberoBinario {
             if(tmp.getDx() != null)
                 tmp = tmp.getDx();
         }*/
-
+        
         return false;
+    }
+    
+    /*
+     * metodo che ritorna il numero di occorrenze del valore richiesto
+     */
+    public int cercaConta(NodoAlbero nodo, char val) {
+        int add = 0;
+        
+        if(nodo == null)
+            return 0;
+        if(nodo.getValue() == val)
+            add++;
+        if(nodo.getSx() != null)
+            add += cercaConta(nodo.getSx(), val);
+        if(nodo.getDx() != null)
+            add += cercaConta(nodo.getDx(), val);
+
+        return add;
+    }
+    
+    /*
+     * metodo che controlla se due alberi hanno la stessa struttura (no valori)
+     */
+    public boolean stessaStruttura(NodoAlbero p1, NodoAlbero p2) {
+        
+        if(p1 == null && p2 == null)
+            return true;
+        if(p1 == null || p2 == null)
+            return false;
+        
+        return stessaStruttura(p1.getSx(), p2.getSx()) &&
+               stessaStruttura(p1.getDx(), p2.getDx());
     }
 }
