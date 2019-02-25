@@ -242,35 +242,6 @@ public class AlberoBinario {
         return somma;
     }
     
-    /* TODO
-     * metodo che ritorna true nel caso trovi il valore richiesto
-     */
-    public boolean cercaIterativa(char val) {
-        NodoAlbero tmp = root;
-        NodoAlbero oldRoot = root;
-        
-        if(tmp == null)
-            return false;
-        //TODO USARE LO STACK PER RICERCA ITERATIVA
-        while(tmp != null) {
-            if(tmp.getValue() == val)
-                return true;
-
-        }
-        
-        
-        /*else {
-            //salva la radice per entrare nelle foglie
-            oldRoot = tmp;
-            if(tmp.getSx() != null)
-                tmp = tmp.getSx();
-            if(tmp.getDx() != null)
-                tmp = tmp.getDx();
-        }*/
-        
-        return false;
-    }
-    
     /*
      * metodo che ritorna il numero di occorrenze del valore richiesto
      */
@@ -302,4 +273,100 @@ public class AlberoBinario {
         return stessaStruttura(p1.getSx(), p2.getSx()) &&
                stessaStruttura(p1.getDx(), p2.getDx());
     }
+    
+    /* 
+     * metodo che popola l'albero iterativamente con valori ordinati
+     */
+    public void fillOrdinato(char[] val) {
+        int i = 0;
+        NodoAlbero current = null;
+        NodoAlbero prev = null;
+        boolean flag = false;
+        
+        if(val.length <= 0)
+            return;
+        //se non e' presente la radice la crea
+        if(this.root == null)
+            root = new NodoAlbero();
+        
+        //la radice prende il primo valore
+        root.setValue(val[i]);
+        current = root;
+        //per i successivi 
+        for(i = 1; i < val.length; i++) {
+            //finche' non inserisce il valore
+            while(current != null) {
+                //se il valore e' maggiore della radice
+                if(val[i] < current.getValue()) {
+                    prev = current;
+                    current = current.getSx();
+                    flag = false;
+                }
+                //se il valore e' minore della radice
+                else if(val[i] > current.getValue()) {
+                    prev = current;
+                    current = current.getDx();
+                    flag = true;
+                }
+                //gli alberi binari di ricerca non accettano doppioni
+                else {
+                    System.out.println("Errore! Valore uguale!");
+                    return;
+                }
+                //se sono in una nuova foglia di una radice < o > di val termino
+                if(current == null) {
+                    //se e' maggiore allora crea la foglia a destra
+                    if(flag)
+                        prev.setDx(new NodoAlbero(val[i]));
+                    //altrimenti se e' minore allora e' la destra
+                    else
+                        prev.setSx(new NodoAlbero(val[i]));
+                    break;
+                }
+            }
+            //ha inserito un nuovo valore e passa al prossimo
+        }
+        
+    }
+    
+    /* 
+     * metodo che ritorna il valore massimo nell'albero
+     */
+    public char cercaMax() {
+        char val = 0;
+        NodoAlbero node = null;
+        
+        if(this.root == null)
+            return 0;
+        //inizia dalla radice
+        node = this.root;
+        //fiche' ci sono figli destri li scorre
+        while(node.getDx() != null)
+            node = node.getDx();
+        //l'ultimo e' il valore maggiore
+        val = node.getValue();
+        
+        return val;
+    }
+    
+    /* 
+     * metodo che ritorna il valore massimo nell'albero
+     */
+    public char cercaMin() {
+        char val = 0;
+        NodoAlbero node = null;
+        
+        if(this.root == null)
+            return 0;
+        //inizia dalla radice
+        node = this.root;
+        //fiche' ci sono figli destri li scorre
+        while(node.getDx() != null)
+            node = node.getSx();
+        //l'ultimo e' il valore maggiore
+        val = node.getValue();
+        
+        return val;
+    }
+    
 }

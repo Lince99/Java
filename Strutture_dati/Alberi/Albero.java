@@ -32,6 +32,8 @@ public class Albero {
         tree.addLeafSx('F', 'G');
         stampaDebug(tree);
         
+        
+        
         print_all(tree);
         
         System.out.println("Nodo "+find+" trovato "+
@@ -44,6 +46,16 @@ public class Albero {
             System.out.println("I due alberi hanno la stessa struttura");
         else
             System.out.println("I due alberi NON hanno la stessa struttura");
+        
+        
+        System.out.println("\n\nAlbero binario di ricerca BST:");
+        AlberoBinario ordered = new AlberoBinario();
+        char[] values = {'A', 'B', 'D', 'C', 'J', 'K', 'Z', 'F',};
+        ordered.fillOrdinato(values);
+        print_all(ordered);
+        System.out.println("Minimo: "+ordered.cercaMin()+
+                           "\tMassimo = "+ordered.cercaMin());
+        
     }
     
     private static void stampaDebug(AlberoBinario tree) {
