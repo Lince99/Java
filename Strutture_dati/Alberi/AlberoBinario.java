@@ -369,4 +369,33 @@ public class AlberoBinario {
         return val;
     }
     
+    /* 
+     * metodo che ritorna l'altezza di nodo
+     */
+    public int livelloOrdered(char val) {
+        int liv = 0;
+        NodoAlbero tmp = this.root;
+        
+        if(tmp == null)
+            return 0;
+        
+        while(tmp != null) {
+            if(val == tmp.getValue())
+                return liv;
+            if(val > tmp.getValue()) {
+                tmp = tmp.getSx();
+                liv++;
+            }
+            else if(val < tmp.getValue()) {
+                tmp = tmp.getDx();
+                liv++;
+            }
+            else
+                return 0;
+        }
+        
+        
+        return liv;
+    }
+    
 }
