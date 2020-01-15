@@ -16,7 +16,12 @@ public class ClientStr {
 
         System.out.println("CLIENT partito in esecuzione ...");
         try {
-
+			//prt l'input da tastiera
+			tastiera = new BufferedReader(new InputStreamReader(System.in));
+			miosocket = new Socket(nomeServer, portaServer);
+			//associo due oggetti al socket per effettuare la scrittura e la lettura
+			outVersoServer = new DataOutputStream(miosocket.getOutputStream());
+			inDalServer = new BufferedReader(new InputStreamReader(miosocket.getInputStream()));
         } catch (UnknownHostException ue) {
             System.err.println("Host sconosciuto");
         } catch (Exception e) {
