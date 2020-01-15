@@ -1,3 +1,9 @@
+/*
+ * esempio preso dal libro a pagina 138
+ * fonti:
+ * https://stackoverflow.com/questions/2541597/how-to-gracefully-handle-the-sigkill-signal-in-java
+ */
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -33,27 +39,53 @@ public class ServerStr {
     }
 
     public void comunica() {
-        try {
-            //rimango in attesa della riga trasmessa dal client
-            System.out.println("Benvenuto client, scrivi una frase e la trasformo in maiuscola. Attendo ...");
-            stringaRicevuta = inDalClient.readLine();
-            System.out.println("Ricevuta la stringa dal client : "+stringaRicevuta);
-            //la modifico e la spedisco al client
-            stringaModificata = stringaRicevuta.toUpperCase();
-            System.out.println("Invio la stringa modificata al client ...");
-            outVersoClient.writeBytes(stringaModificata+'\n');
-            //termina elaborazione sul server : chiudo la connessione del client
-            System.out.println("SERVER: fine elaborazione ...");
-            client.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+		do {
+			try {
+				//rimango in attesa della riga trasmessa dal client
+				System.out.println("Benvenuto client, scrivi una frase e la trasformo in maiuscola. Attendo ...");
+				stringaRicevuta = inDalClient.readLine();
+				//gestice CTRL+D
+				if(stringaRicevuta != null) {
+					System.out.println("Ricevuta la stringa dal client : "+stringaRicevuta);
+					//la modifico e la spedisco al client
+					stringaModificata = stringaRicevuta.toUpperCase();
+					System.out.println("Invio la stringa modificata al client ...");
+					try {
+						outVersoClient.writeBytes(stringaModificata+'\n');
+					} catch(SocketException e) {
+						System.out.println("Client disconnesso con CTRL+D ...");
+						client.close();
+						return;
+					}
+				}
+				else {
+					System.out.println("EOF ricevuto, chiusura connessione ...");
+					//termina elaborazione sul server : chiudo la connessione del client
+					System.out.println("SERVER: fine elaborazione ...");
+					client.close();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		} while(stringaRicevuta != null);
     }
 
-    public static void main(String args[]) {
-        ServerStr servente = new ServerStr();
-        while(true) {
-            servente.attendi();
+    public static void main(String args[]) throws InterruptedException {
+		ServerStr servente = new ServerStr();
+		
+		//gestice CTRL+C
+		Runtime.getRuntime().addShutdownHook(
+			new Thread() {
+				@Override
+				public void run() {
+					System.out.println("\nCTRL+C rilevato ...");
+				}
+			}
+        );
+        
+        servente.attendi();
+        //attende client successivi
+        while(true) { 
             servente.comunica();
         }
     }

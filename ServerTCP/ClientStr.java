@@ -1,3 +1,7 @@
+/*
+ * esempio preso dal libro a pagina 135
+ */
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -33,22 +37,28 @@ public class ClientStr {
     }
 
     public void comunica() {
-        try {
-            System.out.println("... Inserisci la stringa da trasmettere al server"+'\n');
-            stringaUtente = tastiera.readLine();
-            //la spedisco al server
-            System.out.println("... Invio la stringa al server e attendo ...");
-            outVersoServer.writeBytes(stringaUtente+'\n');
-            //leggo la risposta dal server
-            stringaRicevutaDalServer = inDalServer.readLine();
-            System.out.println("... Risposta dal server "+'\n'+stringaRicevutaDalServer);
-            //chiudo la connessione
-            System.out.println("CLIENT: termina elaborazione e chiude connessione");
-            miosocket.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+		do {
+			try {
+				System.out.println("... Inserisci la stringa da trasmettere al server"+'\n');
+				stringaUtente = tastiera.readLine();
+				//la spedisco al server
+				System.out.println("... Invio la stringa al server e attendo ...");
+				outVersoServer.writeBytes(stringaUtente+'\n');
+				if(stringaUtente != null) {
+					//leggo la risposta dal server
+					stringaRicevutaDalServer = inDalServer.readLine();
+					System.out.println("... Risposta dal server "+'\n'+stringaRicevutaDalServer);
+				}
+				else {
+					//chiudo la connessione
+					System.out.println("CLIENT: termina elaborazione e chiude connessione");
+					miosocket.close();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		} while(stringaUtente != null);
     }
 
     public static void main(String args[]) {
