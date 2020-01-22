@@ -7,7 +7,7 @@ import java.net.*;
 import java.util.*;
 
 public class ClientStr {
-    String nomeServer = "localhost";
+    String nomeServer = "";
     int portaServer = 6789;
     Socket miosocket;
     BufferedReader tastiera;

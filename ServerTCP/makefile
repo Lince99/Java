@@ -1,7 +1,7 @@
 all: clean compile
 
 clean:
-	rm -f ServerStr.class ClientStr.class
+	rm -f *.class
 compile:
 	javac ServerStr.java
 	javac ClientStr.java

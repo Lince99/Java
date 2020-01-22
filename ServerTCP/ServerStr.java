@@ -55,7 +55,7 @@ public class ServerStr {
 					} catch(SocketException e) {
 						System.out.println("Client disconnesso con CTRL+D ...");
 						client.close();
-						return;
+						System.exit(0);
 					}
 				}
 				else {
@@ -72,20 +72,19 @@ public class ServerStr {
 
     public static void main(String args[]) throws InterruptedException {
 		ServerStr servente = new ServerStr();
-		
-		//gestice CTRL+C
-		Runtime.getRuntime().addShutdownHook(
-			new Thread() {
-				@Override
-				public void run() {
-					System.out.println("\nCTRL+C rilevato ...");
-				}
-			}
-        );
         
         servente.attendi();
         //attende client successivi
-        while(true) { 
+        while(true) {
+			//gestice CTRL+C
+			Runtime.getRuntime().addShutdownHook(
+				new Thread() {
+					@Override
+					public void run() {
+						System.out.println("\nCTRL+C rilevato ...");
+					}
+				}
+			);
             servente.comunica();
         }
     }
