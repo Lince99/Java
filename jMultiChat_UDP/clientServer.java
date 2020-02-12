@@ -21,14 +21,27 @@
  * 
  */
 
+/*
+ * 1. Server avviato in ascolto di multi connessioni
+ * 2. Avvio client:
+ *    2.1. Connessione al proprio server senza IP
+ *    2.2. Connessione al server esterno se l'IP viene fornito
+ * 3. Client invia messaggio UDP del formato:
+ *    ---> <id timeout=30  value=nomeClient>
+ *        <msg id=1>
+ *            contenuto
+ * 		  </msg>
+ *    </id>  <----
+ */
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
 
 public class clientServer {
-	private String CHAT_BLUE = "\e[34;0m";
-	private String CHAT_VIOLET = "\e[95;0m";
+	//private String CHAT_BLUE = "\e[34;0m";
+	//private String CHAT_VIOLET = "\e[95;0m";
 	
 	private static int port = 2345;
 	
@@ -44,11 +57,9 @@ public class clientServer {
 			}
 		);
 		//avvia thread
-		ServerChat server = new ServerChat(this.port);
+		ServerChat server = new ServerChat();
 		server.run();
-		
-		ClientChat client = new ClientChat(this.port);
-		client.run();
+	
 	}
 }
 
@@ -57,6 +68,7 @@ class ServerChat implements Runnable {
 	private ArrayList<ClientObj> client_list;
 	private DatagramSocket serverSocket;
 	private static int buffer_size = 1024;
+	private int port = 2345;
 	
 	
 	public void ServerChat(int max, ClientObj lista) {
@@ -64,9 +76,11 @@ class ServerChat implements Runnable {
 		this.client_list = new ArrayList<ClientObj>();
 	}
 	
-	public void ServerChat(int port) {
+	public void ServerChat() {
 		//bind sel socket
-		this.serverSocket = new DatagramSocket(port);
+		try{
+		this.serverSocket = new DatagramSocket(this.port);
+		}catch(Exception e){}
 		this.client_list = new ArrayList<ClientObj>();
 		this.max_connections = 17;
 	}
@@ -110,12 +124,17 @@ class ServerChat implements Runnable {
 }
 
 class ClientChat implements Runnable {
+	public ClientChat() {
+		
+	}
 	
+	public void run() {
+		
+	}
 }
 
 class ClientObj {
 	private int id;
-	private String msg;
 	private int timeout;
 	private int port_server;
 	
@@ -123,13 +142,11 @@ class ClientObj {
 	public ClientObj() {
 		this.id = 0;
 		this.timeout = 30;
-		this.msg = new String("");
 		this.port_server = 8080;
 	}
 	public ClientObj(int id, int port) {
 		this.id = id;
 		this.timeout = 30;
-		this.msg = new String("");
 		this.port_server = port;
 	}
 	
