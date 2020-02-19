@@ -36,25 +36,24 @@ import java.net.*;
 import java.util.*;
 
 public class ChatClient {
-
     // private String clientID = new String("");
     // private DatagramSocket udpSocket;
     // private InetAddress serverAddress;
     // private int serverPort = 8888;
     // private Scanner scanner = new Scanner(System.in);
 
-    private DatagramSocket clientSocket;
-
+	private static DatagramSocket clientSocket;
 
     public static void main(String[] args) {
+		
         //gestice CTRL+C
         Runtime.getRuntime().addShutdownHook(
             new Thread() {
                 @Override
                 public void run() {
                     System.out.println("\nCTRL+C rilevato ...");
-                    this.clientSocket.close();
-                    return;
+                    clientSocket.close();
+                    System.exit(0);
                 }
             }
         );
@@ -67,22 +66,47 @@ public class ChatClient {
 
         int timeout = 60;
         BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-        clientSocket = new DatagramSocket();
-        clientSocket.setBroadcast(true);
-        InetAddress IPAddress = InetAddress.getByName("localhost");
+        try {
+			clientSocket = new DatagramSocket();
+			clientSocket.setBroadcast(true);
+		} catch(SocketException se) {
+			se.printStackTrace();
+			System.exit(1);
+		}
+		try {
+			InetAddress IPAddress = InetAddress.getByName("localhost");
+        } catch(UnknownHostException ue) {
+			ue.printStackTrace();
+			System.exit(1);
+		}
         while(true) {
             byte[] sendData = new byte[1024];
             byte[] receiveData = new byte[1024];
-            String sentence = inFromUser.readLine();
-            String msg = "<msg id=\"Laykeen\" timeout=\""+timeout+"\">"+sencence+"</msg>";
+            String sentence;
+            DatagramPacket sendPacket;
+            DatagramPacket receivePacket;
+            try {
+				System.out.println("Inserisci il messaggio da inviare in broadcast:");
+				sentence = inFromUser.readLine();
+			} catch(IOException te) {
+				te.printStackTrace();
+				break;
+			}
+            String msg = "<msg id=\"Laykeen\" timeout=\""+timeout+"\">"+sentence+"</msg>";
+            System.out.println("Messaggio inviato: "+msg);
             sendData = msg.getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), 9876);
-            clientSocket.send(sendPacket);
-            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            clientSocket.receive(receivePacket);
+            try {
+				sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), 9876);
+				clientSocket.send(sendPacket);
+				receivePacket = new DatagramPacket(receiveData, receiveData.length);
+				clientSocket.receive(receivePacket);
+			} catch(Exception e) {
+				e.printStackTrace();
+				break;
+			}
+            
             String modifiedSentence = new String(receivePacket.getData());
             System.out.println("FROM SERVER:" + modifiedSentence);
-            sleep(timeout);
             clientSocket.close();
         }
 
